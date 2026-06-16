@@ -1,10 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { datasetsApi, getErrorMessage } from '../api';
-import type {
-  GDriveImportRequest,
-  LocalImportRequest,
-  MoexLoadRequest,
-} from '../api';
+import type { GDriveImportRequest, MoexLoadRequest } from '../api';
 import { notify } from '../store/notificationStore';
 import { queryKeys } from './queryKeys';
 
@@ -40,19 +36,6 @@ export function useCreateMoexDataset() {
       ),
     onSuccess: (data) => {
       notify(`Dataset "${data.name}" created from MOEX`, 'success');
-      invalidate();
-    },
-    onError: (error) => notify(getErrorMessage(error), 'error'),
-  });
-}
-
-export function useImportLocalDataset() {
-  const invalidate = useInvalidateDatasets();
-  return useMutation({
-    mutationFn: (payload: LocalImportRequest) => datasetsApi.importFromLocal(payload),
-    onMutate: (payload) => notify(`Importing "${payload.name}"…`, 'info'),
-    onSuccess: (data) => {
-      notify(`Dataset "${data.name}" imported`, 'success');
       invalidate();
     },
     onError: (error) => notify(getErrorMessage(error), 'error'),

@@ -5,7 +5,7 @@
 
 // ---- Enums ----------------------------------------------------------------
 
-export type DatasetSource = 'moex' | 'local' | 'gdrive' | 'upload';
+export type DatasetSource = 'moex' | 'gdrive' | 'upload';
 
 export type Executor = 'local' | 'datasphere';
 
@@ -52,13 +52,6 @@ export interface MoexLoadRequest {
   board?: string | null;
   interval?: number | null;
   concurrency?: number | null;
-  description?: string | null;
-}
-
-export interface LocalImportRequest {
-  name: string;
-  path: string;
-  tickers?: string[] | null;
   description?: string | null;
 }
 

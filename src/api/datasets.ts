@@ -2,7 +2,6 @@ import { apiClient } from './client';
 import type {
   DatasetRead,
   GDriveImportRequest,
-  LocalImportRequest,
   Message,
   MoexLoadRequest,
 } from './types';
@@ -20,11 +19,6 @@ export const datasetsApi = {
 
   loadFromMoex: async (payload: MoexLoadRequest): Promise<DatasetRead> => {
     const { data } = await apiClient.post<DatasetRead>('/datasets/moex', payload);
-    return data;
-  },
-
-  importFromLocal: async (payload: LocalImportRequest): Promise<DatasetRead> => {
-    const { data } = await apiClient.post<DatasetRead>('/datasets/local', payload);
     return data;
   },
 

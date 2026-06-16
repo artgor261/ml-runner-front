@@ -18,7 +18,6 @@ const SOURCE_FILTER: FilterDef<DatasetRead> = {
   getValue: (row) => row.source,
   options: [
     { label: 'MOEX', value: 'moex' },
-    { label: 'Local', value: 'local' },
     { label: 'Google Drive', value: 'gdrive' },
     { label: 'Upload', value: 'upload' },
   ],

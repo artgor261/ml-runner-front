@@ -12,11 +12,7 @@ import {
   Tabs,
   TextField,
 } from '@mui/material';
-import {
-  useCreateMoexDataset,
-  useImportGDriveDataset,
-  useImportLocalDataset,
-} from '../../hooks/useDatasets';
+import { useCreateMoexDataset, useImportGDriveDataset } from '../../hooks/useDatasets';
 import { parseTickers } from '../../utils/format';
 
 interface CreateDatasetDialogProps {
@@ -24,7 +20,7 @@ interface CreateDatasetDialogProps {
   onClose: () => void;
 }
 
-type SourceTab = 'moex' | 'local' | 'gdrive';
+type SourceTab = 'moex' | 'gdrive';
 
 interface MoexForm {
   name: string;
@@ -32,12 +28,6 @@ interface MoexForm {
   start: string;
   end: string;
   interval: string;
-  description: string;
-}
-interface LocalForm {
-  name: string;
-  path: string;
-  tickers: string;
   description: string;
 }
 interface GDriveForm {
@@ -51,25 +41,19 @@ export function CreateDatasetDialog({ open, onClose }: CreateDatasetDialogProps)
   const [tab, setTab] = useState<SourceTab>('moex');
 
   const moexMutation = useCreateMoexDataset();
-  const localMutation = useImportLocalDataset();
   const gdriveMutation = useImportGDriveDataset();
 
   const moexForm = useForm<MoexForm>({
     defaultValues: { name: '', tickers: '', start: '', end: '', interval: '', description: '' },
   });
-  const localForm = useForm<LocalForm>({
-    defaultValues: { name: '', path: '', tickers: '', description: '' },
-  });
   const gdriveForm = useForm<GDriveForm>({
     defaultValues: { name: '', gdrive_url: '', tickers: '', description: '' },
   });
 
-  const loading =
-    moexMutation.isPending || localMutation.isPending || gdriveMutation.isPending;
+  const loading = moexMutation.isPending || gdriveMutation.isPending;
 
   const close = () => {
     moexForm.reset();
-    localForm.reset();
     gdriveForm.reset();
     onClose();
   };
@@ -88,18 +72,6 @@ export function CreateDatasetDialog({ open, onClose }: CreateDatasetDialogProps)
     );
   });
 
-  const submitLocal = localForm.handleSubmit((values) => {
-    localMutation.mutate(
-      {
-        name: values.name,
-        path: values.path,
-        tickers: values.tickers ? parseTickers(values.tickers) : null,
-        description: values.description || null,
-      },
-      { onSuccess: close },
-    );
-  });
-
   const submitGDrive = gdriveForm.handleSubmit((values) => {
     gdriveMutation.mutate(
       {
@@ -112,8 +84,7 @@ export function CreateDatasetDialog({ open, onClose }: CreateDatasetDialogProps)
     );
   });
 
-  const onSubmit =
-    tab === 'moex' ? submitMoex : tab === 'local' ? submitLocal : submitGDrive;
+  const onSubmit = tab === 'moex' ? submitMoex : submitGDrive;
 
   return (
     <Dialog open={open} onClose={close} maxWidth="sm" fullWidth>
@@ -125,7 +96,6 @@ export function CreateDatasetDialog({ open, onClose }: CreateDatasetDialogProps)
         sx={{ px: 3, borderBottom: 1, borderColor: 'divider' }}
       >
         <Tab label="MOEX" value="moex" />
-        <Tab label="Local" value="local" />
         <Tab label="Google Drive" value="gdrive" />
       </Tabs>
 
@@ -209,59 +179,6 @@ export function CreateDatasetDialog({ open, onClose }: CreateDatasetDialogProps)
               <Controller
                 name="description"
                 control={moexForm.control}
-                render={({ field }) => (
-                  <TextField {...field} label="Description (optional)" fullWidth multiline minRows={2} />
-                )}
-              />
-            </Stack>
-          )}
-
-          {tab === 'local' && (
-            <Stack spacing={2}>
-              <Controller
-                name="name"
-                control={localForm.control}
-                rules={{ required: 'Name is required' }}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    label="Dataset name"
-                    fullWidth
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="path"
-                control={localForm.control}
-                rules={{ required: 'Path is required' }}
-                render={({ field, fieldState }) => (
-                  <TextField
-                    {...field}
-                    label="Directory path"
-                    placeholder="/data/parquet/moex"
-                    fullWidth
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message ?? 'Folder with <TICKER>.parquet files'}
-                  />
-                )}
-              />
-              <Controller
-                name="tickers"
-                control={localForm.control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Tickers (optional)"
-                    placeholder="Leave empty to use all parquet files"
-                    fullWidth
-                  />
-                )}
-              />
-              <Controller
-                name="description"
-                control={localForm.control}
                 render={({ field }) => (
                   <TextField {...field} label="Description (optional)" fullWidth multiline minRows={2} />
                 )}
