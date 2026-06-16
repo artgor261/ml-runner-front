@@ -94,9 +94,17 @@ npx openapi-typescript docs/openapi.json -o src/api/schema.d.ts
 
 ## Dataset preview (reading parquet in the browser)
 
-Dataset rows are stored as parquet files on the backend
-(`<datasets-dir>/<dataset>/<TICKER>.parquet`) and are **not** exposed by the
-REST API. The Dataset Details page previews them directly:
+The Dataset Details page shows dataset rows in a paginated, per-ticker table.
+Rows come from two sources:
+
+- **Inline (preferred).** The creation endpoints (`POST /datasets/moex`,
+  `/datasets/gdrive`) return `DatasetReadWithData` — metadata plus the loaded
+  rows per ticker. Those rows are cached client-side on success
+  (`queryKeys.datasetData`) and rendered immediately, so a freshly created
+  dataset previews instantly, including in production.
+- **Parquet fallback (dev).** For datasets opened later (the detail `GET`
+  returns metadata only), rows are read directly from the backend's parquet
+  files:
 
 - A dev-only Vite middleware serves parquet files over HTTP from
   `VITE_DATASETS_DIR` (default `~/ml-runner-backend/datasets`). It only serves

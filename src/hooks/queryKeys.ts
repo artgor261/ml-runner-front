@@ -6,6 +6,8 @@ export const queryKeys = {
 
   datasets: ['datasets'] as const,
   dataset: (id: string) => ['datasets', id] as const,
+  /** Inline rows returned by the dataset creation endpoints, kept client-side. */
+  datasetData: (id: string) => ['datasets', id, 'data'] as const,
 
   experiments: ['experiments'] as const,
   experiment: (id: string) => ['experiments', id] as const,

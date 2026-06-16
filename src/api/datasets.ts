@@ -1,6 +1,7 @@
 import { apiClient } from './client';
 import type {
   DatasetRead,
+  DatasetReadWithData,
   GDriveImportRequest,
   Message,
   MoexLoadRequest,
@@ -17,13 +18,13 @@ export const datasetsApi = {
     return data;
   },
 
-  loadFromMoex: async (payload: MoexLoadRequest): Promise<DatasetRead> => {
-    const { data } = await apiClient.post<DatasetRead>('/datasets/moex', payload);
+  loadFromMoex: async (payload: MoexLoadRequest): Promise<DatasetReadWithData> => {
+    const { data } = await apiClient.post<DatasetReadWithData>('/datasets/moex', payload);
     return data;
   },
 
-  importFromGDrive: async (payload: GDriveImportRequest): Promise<DatasetRead> => {
-    const { data } = await apiClient.post<DatasetRead>('/datasets/gdrive', payload);
+  importFromGDrive: async (payload: GDriveImportRequest): Promise<DatasetReadWithData> => {
+    const { data } = await apiClient.post<DatasetReadWithData>('/datasets/gdrive', payload);
     return data;
   },
 

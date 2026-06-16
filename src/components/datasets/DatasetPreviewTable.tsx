@@ -36,6 +36,7 @@ export function DatasetPreviewTable({ dataset }: DatasetPreviewTableProps) {
   }, [ticker]);
 
   const { data, isLoading, isError, error, isPlaceholderData } = useDatasetPreview({
+    datasetId: dataset.id,
     datasetPath: dataset.path,
     ticker,
     page,

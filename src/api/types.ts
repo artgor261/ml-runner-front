@@ -44,6 +44,20 @@ export interface DatasetRead {
   created_at: string;
 }
 
+/** A single dataset row (raw candle/feature values). */
+export type DatasetRow = Record<string, unknown>;
+
+/** Raw dataset rows keyed by ticker. */
+export type DatasetData = Record<string, DatasetRow[]>;
+
+/**
+ * DatasetRead enriched with the loaded rows per ticker. Returned by the
+ * dataset creation endpoints (POST /datasets/moex, /datasets/gdrive).
+ */
+export interface DatasetReadWithData extends DatasetRead {
+  data: DatasetData;
+}
+
 export interface MoexLoadRequest {
   name: string;
   tickers: string[];
