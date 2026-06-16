@@ -29,6 +29,15 @@ export function useCreateMoexDataset() {
   const invalidate = useInvalidateDatasets();
   return useMutation({
     mutationFn: (payload: MoexLoadRequest) => datasetsApi.loadFromMoex(payload),
+    // The MOEX request is synchronous and can take a while (data is fetched
+    // ticker by ticker), so tell the user it has started right away.
+    onMutate: (payload) =>
+      notify(
+        `Loading "${payload.name}" from MOEX (${payload.tickers.length} ticker${
+          payload.tickers.length === 1 ? '' : 's'
+        })… this may take a while`,
+        'info',
+      ),
     onSuccess: (data) => {
       notify(`Dataset "${data.name}" created from MOEX`, 'success');
       invalidate();
@@ -41,6 +50,7 @@ export function useImportLocalDataset() {
   const invalidate = useInvalidateDatasets();
   return useMutation({
     mutationFn: (payload: LocalImportRequest) => datasetsApi.importFromLocal(payload),
+    onMutate: (payload) => notify(`Importing "${payload.name}"…`, 'info'),
     onSuccess: (data) => {
       notify(`Dataset "${data.name}" imported`, 'success');
       invalidate();
@@ -53,6 +63,8 @@ export function useImportGDriveDataset() {
   const invalidate = useInvalidateDatasets();
   return useMutation({
     mutationFn: (payload: GDriveImportRequest) => datasetsApi.importFromGDrive(payload),
+    onMutate: (payload) =>
+      notify(`Importing "${payload.name}" from Google Drive…`, 'info'),
     onSuccess: (data) => {
       notify(`Dataset "${data.name}" imported from Google Drive`, 'success');
       invalidate();

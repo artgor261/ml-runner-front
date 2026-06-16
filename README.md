@@ -92,6 +92,25 @@ sync with the API.
 npx openapi-typescript docs/openapi.json -o src/api/schema.d.ts
 ```
 
+## Dataset preview (reading parquet in the browser)
+
+Dataset rows are stored as parquet files on the backend
+(`<datasets-dir>/<dataset>/<TICKER>.parquet`) and are **not** exposed by the
+REST API. The Dataset Details page previews them directly:
+
+- A dev-only Vite middleware serves parquet files over HTTP from
+  `VITE_DATASETS_DIR` (default `~/ml-runner-backend/datasets`). It only serves
+  `.parquet` files resolving inside that directory (path-traversal is blocked).
+- The browser fetches a file once, parses it with [`hyparquet`](https://github.com/hyparam/hyparquet)
+  (`src/utils/parquet.ts`), caches the buffer in memory, and decodes row windows
+  on demand — so paging through 25k+ rows never re-downloads the file.
+- The table (`components/datasets/DatasetPreviewTable.tsx`) has per-ticker tabs,
+  dynamic columns and pagination.
+
+> For production, replace the dev middleware with a backend endpoint that
+> streams parquet files (or returns row pages) and point `datasetFileUrl()` at
+> it — the rest of the preview UI stays the same.
+
 ## Live monitoring
 
 Training runs and run-status queries poll automatically while a run is

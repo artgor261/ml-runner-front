@@ -8,6 +8,7 @@ import { SectionCard } from '../components/common/SectionCard';
 import { DefinitionList } from '../components/common/DefinitionList';
 import { ConfirmDialog } from '../components/common/ConfirmDialog';
 import { LoadingState, ErrorState } from '../components/common/States';
+import { DatasetPreviewTable } from '../components/datasets/DatasetPreviewTable';
 import { useDataset, useDeleteDataset } from '../hooks/useDatasets';
 import { formatDate, formatNumber } from '../utils/format';
 
@@ -73,6 +74,10 @@ export function DatasetDetails() {
               ))}
             </Stack>
           )}
+        </SectionCard>
+
+        <SectionCard title="Data" disablePadding>
+          <DatasetPreviewTable dataset={data} />
         </SectionCard>
 
         {Object.keys(data.meta ?? {}).length > 0 && (
